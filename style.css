@@ -1,0 +1,102 @@
+/* CSS styles here */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Thay đổi height thành min-height */
+    overflow-x: hidden; /* Ngăn chặn cuộn ngang */
+}
+
+.menu {
+    background-color: #333;
+    overflow: hidden;
+    position: fixed; /* Đặt thanh menu ở vị trí cố định trên cùng */
+    top: 0; /* Đặt top là 0 để nằm ở trên cùng */
+    left: 0; /* Đặt left là 0 để căn trái */
+    width: 100%; /* Đặt chiều rộng là 100% */
+    z-index: 1000; /* Đảm bảo thanh menu hiển thị trên tất cả các phần khác */
+    transition: top 0.3s ease; /* Thêm hiệu ứng transition cho top */
+}
+
+.menu a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.menu a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    margin: 0 auto;
+    margin-top: 60px; /* Thêm margin-top để tách phần login form và thanh menu */
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    width: 100%;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="submit"] {
+    width: calc(100% - 24px);
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+p {
+    text-align: center;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0056b3;
+}

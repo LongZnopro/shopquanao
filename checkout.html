@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .checkout-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .checkout-summary {
+            flex: 1;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        #checkoutSummary p {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .checkout-form {
+            flex: 1;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        form div {
+            margin-bottom: 20px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        form input[type="text"],
+        form input[type="tel"],
+        form input[type="email"],
+        form textarea,
+        form select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        form select {
+            width: 100%;
+        }
+
+        form button[type="submit"] {
+            background-color: #f60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 0;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: calc(100% - 20px);
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #f90;
+        }
+
+        /* Styles for cart item in checkout */
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .checkout-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .checkout-item-details {
+            flex-grow: 1;
+        }
+
+        .checkout-item-details p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .checkout-item button {
+            background-color: transparent;
+            color: #f00;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-size: 18px;
+        }
+
+        .checkout-item button:hover {
+            color: #c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-summary">
+            <h1>Checkout</h1>
+            <div id="checkoutSummary">
+                <!-- Checkout summary will be dynamically added here -->
+            </div>
+        </div>
+        <div class="checkout-form">
+            <form id="checkoutForm">
+                <div>
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div>
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div>
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div>
+                    <label for="address">Shipping Address:</label>
+                    <textarea id="address" required></textarea>
+                </div>
+                <div>
+                    <label for="paymentMethod">Payment Method:</label>
+                    <select id="paymentMethod" required>
+                        <option value="">-- Select Payment Method --</option>
+                        <option value="creditCard">Credit Card</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="bankTransfer">Bank Transfer</option>
+                    </select>
+                </div>
+                <button type="submit">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to render checkout summary
+            function renderCheckoutSummary() {
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                const checkoutSummary = document.getElementById('checkoutSummary');
+                checkoutSummary.innerHTML = '';
+                let total = 0;
+
+                cartItems.forEach(item => {
+                    const totalPrice = item.quantity * item.price;
+                    total += totalPrice;
+                    const itemSummary = document.createElement('div');
+                    itemSummary.classList.add('checkout-item');
+                    itemSummary.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="checkout-item-details">
+                            <p>${item.name} - Size: ${item.size} - Quantity: ${item.quantity}</p>
+                            <p>Total Price: $${totalPrice.toFixed(2)}</p>
+                        </div>
+                        <button class="btn-remove-item" data-index="${cartItems.indexOf(item)}">&#10006;</button>
+                    `;
+                    checkoutSummary.appendChild(itemSummary);
+                });
+
+                // Display total price
+                const totalPriceElement = document.createElement('p');
+                totalPriceElement.textContent = `Total: $${total.toFixed(2)}`;
+                checkoutSummary.appendChild(totalPriceElement);
+
+                // Add event listener for remove button
+                const removeButtons = document.querySelectorAll('.btn-remove-item');
+                removeButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        removeItem(index);
+                    });
+                });
+            }
+
+            // Render checkout summary when page loads
+            renderCheckoutSummary();
+
+            // Handle form submission
+            const checkoutForm = document.getElementById('checkoutForm');
+            checkoutForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                // Here you can handle the form submission, like sending data to server or processing the order
+                alert('Your order has been placed! Thank you.');
+                // After handling the order, you may want to clear the cart and redirect user to a thank you page
+                localStorage.removeItem('cartItems');
+                window.location.href = 'thank_you.html'; // Redirect to thank you page
+            });
+
+            // Function to remove an item from the cart
+            function removeItem(index) {
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                cartItems.splice(index, 1);
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                renderCheckoutSummary();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .menu {
+            background-color: #333;
+            overflow: hidden;
+        }
+        .menu a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .menu a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .menu a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-bar input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .filter-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .filter-bar select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-left: 20px;
+        }
+        #priceSlider {
+            width: 300px;
+            margin-left: 20px;
+        }
+        #priceRange {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .product {
+            width: 200px;
+            margin: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+        .product img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .product h3 {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+        .product p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .product:hover {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu -->
+    <div class="menu">
+        <a href="index.html">Home</a>
+        <a class="active" href="products.html">Products</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="cart.html">Cart</a>
+        <a id="accountLink" href="login.html"><i class="fas fa-user"></i></a>
+    </div>
+
+    <div class="container">
+        <h2>Products</h2>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search products...">
+        </div>
+        <div class="filter-bar">
+            <input type="range" min="0" max="1000" value="1000" class="slider" id="priceSlider">
+            <span id="priceRange">$0 - $500</span>
+            <select id="sortOptions">
+                <option value="nameAscending">Name: A-Z</option>
+                <option value="nameDescending">Name: Z-A</option>
+            </select>
+        </div>
+        <div class="product-list">
+            <!-- Product items will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for dynamic product listing, search, filtering, sorting, and local storage
+        const productList = document.querySelector('.product-list');
+        const searchInput = document.getElementById('searchInput');
+        const priceSlider = document.getElementById('priceSlider');
+        const priceRange = document.getElementById('priceRange');
+        const sortOptions = document.getElementById('sortOptions');
+        const accountLink = document.getElementById('accountLink');
+
+        // Full list of products
+        const products = [
+            { name: "Product 1", price: 150, image: "https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lk13h4bw1vk278" },
+            { name: "Product 2", price: 260, image: "https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lka7p3vqfycc6b" },
+            { name: "Product 3", price: 170, image: "https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lka7mx5zo78cf3" },
+            { name: "Product 4", price: 480, image: "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lqnij6spldtje9" },
+            { name: "Product 5", price: 190, image: "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lqnij6sp1pvba2" },
+            { name: "Product 6", price: 500, image: "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lt9t7szwqmkke1" },
+            { name: "Product 7", price: 310, image: "https://down-vn.img.susercontent.com/file/8fdd7f253bd49c1c4028b7015190ae44" },
+            { name: "Product 8", price: 320, image: "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lna7eafyjiii0f" },
+            // Add more products as needed
+        ];
+
+        // Function to display products
+        function displayProducts(products) {
+            productList.innerHTML = '';
+            products.forEach((product, index) => {
+                const productItem = `
+                    <div class="product">
+                        <a href="product1.html?name=${product.name}&price=${product.price}&image=${product.image}">
+                            <img src="${product.image}" alt="${product.name}">
+                            <h3>${product.name}</h3>
+                            <p>$${product.price}</p>
+                        </a>
+                    </div>
+                `;
+                productList.innerHTML += productItem;
+            });
+        }
+
+        // Display all products initially
+        displayProducts(products);
+
+        // Search functionality
+        searchInput.addEventListener('keyup', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm)
+            );
+            displayProducts(filteredProducts);
+        });
+
+        // Price slider functionality
+        priceSlider.addEventListener('input', () => {
+            const price = priceSlider.value;
+            priceRange.textContent = `$0 - $${price}`;
+            filterProductsByPrice(price);
+        });
+
+        // Filter products by price
+        function filterProductsByPrice(price) {
+            const filteredProducts = products.filter(product => product.price <= price);
+            displayProducts(filteredProducts);
+        }
+
+        // Sorting functionality
+        sortOptions.addEventListener('change', () => {
+            const sortValue = sortOptions.value;
+            let sortedProducts = [];
+            if (sortValue === 'nameAscending') {
+                sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortValue === 'nameDescending') {
+                sortedProducts = products.sort((a, b) => b.name.localeCompare(a.name));
+            }
+            displayProducts(sortedProducts);
+        });
+
+        // Check if user is logged in and update account link
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                accountLink.href = "account.html";
+                accountLink.innerHTML = `<i class="fas fa-user"></i> ${currentUser.username}`;
+            }
+        });
+    </script>
+</body>
+</html>

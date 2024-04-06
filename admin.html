@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #1a1a1a;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        button.delete {
+            background-color: #ff4d4d;
+        }
+
+        button.delete:hover {
+            background-color: #ff6666;
+        }
+
+        .logout-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin</h1>
+    </header>
+    <div class="container">
+        <section id="users-section">
+            <h2>Users</h2>
+            <ul id="user-list"></ul>
+        </section>
+    </div>
+    <button onclick="logout()" class="logout-button">Logout</button>
+    <script>
+        // Hàm đăng xuất người dùng
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const userList = document.getElementById('user-list');
+            // Lấy danh sách người dùng từ localStorage và hiển thị
+            const users = JSON.parse(localStorage.getItem('users'));
+            users.forEach(user => {
+                // Bỏ qua tài khoản admin
+                if (user.isAdmin) {
+                    return;
+                }
+                const li = document.createElement('li');
+                li.textContent = user.username;
+                userList.appendChild(li);
+                // Tạo button "Xóa" cho mỗi người dùng
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'delete';
+                deleteButton.addEventListener('click', function() {
+                    // Xóa người dùng khỏi danh sách
+                    const index = users.indexOf(user);
+                    if (index !== -1) {
+                        users.splice(index, 1);
+                        localStorage.setItem('users', JSON.stringify(users));
+                        // Cập nhật giao diện
+                        userList.removeChild(li);
+                    }
+                });
+                li.appendChild(deleteButton);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Thanh menu -->
+    <div class="menu">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="cart.html">Cart</a>
+    </div>
+
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+            <input type="submit" value="Login">
+        </form>
+        <p>Don't have an account? <a href="register.html">Register here</a>.</p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tạo tài khoản admin mặc định nếu chưa tồn tại
+            const adminDefault = {
+                username: 'admin',
+                password: '12345',
+                isAdmin: true
+            };
+
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            // Kiểm tra xem admin có trong danh sách users chưa, nếu chưa thêm vào
+            const adminExists = users.some(u => u.username === adminDefault.username && u.password === adminDefault.password);
+            if (!adminExists) {
+                users.push(adminDefault);
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+
+            const loginForm = document.getElementById('loginForm');
+            
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Lấy thông tin từ form đăng nhập
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                // Kiểm tra thông tin đăng nhập
+                let users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.username === username && u.password === password);
+                
+                if (!user) {
+                    alert('Invalid username or password. Please try again.');
+                    return;
+                }
+                
+                // Lưu thông tin người dùng đã đăng nhập vào localStorage
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                // Thông báo đăng nhập thành công và chuyển hướng đến trang chính sau 1 giây
+                alert('Login successful. Welcome, ' + username + '!');
+                setTimeout(function() {
+                    if (user.isAdmin) {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                }, 1000);
+            });
+
+        });
+    </script>
+</body>
+</html>

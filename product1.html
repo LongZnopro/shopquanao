@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Reset CSS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            position: relative; /* Đặt vị trí tương đối để dễ điều chỉnh vị trí của nút giỏ hàng */
+        }
+
+        /* Product detail styles */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .product-detail {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .product-detail img {
+            width: 250px;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .product-detail-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-detail h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .product-detail p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .product-detail label {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-detail .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .product-detail select, .product-detail input {
+            width: 48%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .product-detail .btn-add-to-cart {
+            background-color: #f60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 0;
+            width: 100%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .product-detail .btn-add-to-cart:hover {
+            background-color: #f90;
+        }
+
+        /* Cart styles */
+        .cart-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .cart-container.open {
+            transform: translateX(0);
+        }
+
+        .cart {
+            margin-bottom: 20px;
+        }
+
+        .cart h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .cart-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cart-items li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .cart-items li img {
+            width: 50px;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        .cart-items li span {
+            margin-right: 10px;
+        }
+
+        .btn-remove-item {
+            background-color: transparent; /* Loại bỏ màu nền */
+            color: #f00; /* Màu chữ đỏ */
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease; /* Hiệu ứng chuyển màu khi di chuột */
+            font-size: 18px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-remove-item:hover {
+            color: #c00; /* Màu chữ đỏ sáng khi di chuột */
+        }
+
+        .quantity-input {
+            width: 50px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn-toggle-cart {
+            position: absolute;
+            top: 20px; /* Điều chỉnh vị trí từ top */
+            left: 20px; /* Điều chỉnh vị trí từ left */
+            background-color: #f60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .btn-checkout {
+            background-color: #f60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 0;
+            width: 45%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-checkout:hover {
+            background-color: #f90;
+        }
+
+        .btn-view-cart {
+            background-color: #f60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 0;
+            width: 45%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-view-cart:hover {
+            background-color: #f90;
+        }
+
+        .user-info {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .user-info .user-name {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .user-info .btn-logout {
+            background-color: #f00;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .user-info .btn-logout:hover {
+            background-color: #c00;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #f00;
+            color: #fff;
+            border-radius: 50%;
+            padding: 5px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-info" id="userInfo">
+            <!-- User info will be dynamically added here -->
+        </div>
+        <div class="product-detail">
+            <!-- Product details will be dynamically added here -->
+        </div>
+    </div>
+
+    <div class="cart-container" id="cartContainer">
+        <div class="cart">
+            <h2>Shopping Cart</h2>
+            <ul class="cart-items" id="cartItems">
+                <!-- Cart items will be dynamically added here -->
+            </ul>
+            <button class="btn-view-cart" id="btnViewCart">View Cart</button>
+            <button class="btn-checkout" id="btnCheckout">Checkout</button>
+        </div>
+    </div>
+
+    <button class="btn-toggle-cart" id="btnToggleCart">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="cartCount">0</span>
+    </button>
+
+    <script>
+        // Function to get URL parameters
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // Function to toggle cart visibility
+        function toggleCartVisibility() {
+            cartContainer.classList.toggle('open');
+        }
+
+        // Get product details from URL
+        const productName = getParameterByName('name');
+        const productPrice = parseFloat(getParameterByName('price'));
+        const productImage = getParameterByName('image');
+
+        // Check for valid product details
+        if (!productName || !productPrice || !productImage) {
+            document.querySelector('.product-detail').innerHTML = '<p>Error: Product details not found.</p>';
+        } else {
+            // Display product details
+            const productDetail = document.querySelector('.product-detail');
+            productDetail.innerHTML = `
+                <img src="${productImage}" alt="${productName}" class="product-image">
+                <div class="product-info">
+                    <h2>${productName}</h2>
+                    <p class="price">$${productPrice.toFixed(2)}</p>
+                    <div class="input-group">
+                        <label for="size">Size:</label>
+                        <select id="size">
+                            <option value="s">S</option>
+                            <option value="m">M</option>
+                            <option value="l">L</option>
+                            <option value="xl">XL</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" id="quantity" min="1" value="1">
+                    </div>
+                    <button class="btn-add-to-cart">Add to Cart</button>
+                </div>
+            `;
+        }
+
+        // Shopping Cart functionality
+        const addToCartBtn = document.querySelector('.btn-add-to-cart');
+        const cartItemsList = document.querySelector('.cart-items');
+        const btnToggleCart = document.getElementById('btnToggleCart');
+        const btnCheckout = document.getElementById('btnCheckout');
+        const btnViewCart = document.getElementById('btnViewCart');
+        const cartContainer = document.getElementById('cartContainer');
+        const cartCount = document.getElementById('cartCount');
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        renderCartItems(); // Render cart items when page loads
+        updateCartCount(); // Update cart count
+
+        addToCartBtn.addEventListener('click', () => {
+            const size = document.getElementById('size').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            // Check if the product already exists in the cart
+            const existingItemIndex = cartItems.findIndex(item => item.name === productName && item.size === size);
+            if (existingItemIndex !== -1) {
+                // Update quantity if the same product with the same size already exists
+                cartItems[existingItemIndex].quantity += quantity;
+            } else {
+                // Add item to cart if it doesn't exist
+                cartItems.push({ name: productName, price: productPrice, size: size, quantity: quantity, image: productImage });
+            }
+
+            // Save cart items to localStorage
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+            // Render cart items
+            renderCartItems();
+            updateCartCount(); // Update cart count
+
+            // Toggle cart visibility
+            toggleCartVisibility();
+        });
+
+        btnToggleCart.addEventListener('click', () => {
+            toggleCartVisibility();
+        });
+
+        btnCheckout.addEventListener('click', () => {
+            // Here you can handle the checkout process, like redirecting to a checkout page
+            window.location.href = 'checkout.html';
+        });
+
+        btnViewCart.addEventListener('click', () => {
+            // Redirect to the cart page
+            window.location.href = 'cart.html';
+        });
+
+        // Function to render cart items
+        function renderCartItems() {
+            cartItemsList.innerHTML = '';
+            let total = 0; // Tổng giá tiền
+
+            cartItems.forEach((item, index) => {
+                const cartItem = document.createElement('li');
+                cartItem.classList.add('cart-item');
+                const totalPrice = item.quantity * item.price; // Giá tiền của sản phẩm
+                total += totalPrice; // Cập nhật tổng giá tiền
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-details">
+                        <span>${item.name} - Size: ${item.size} - Quantity: ${item.quantity}</span>
+                        <span>Total Price: $${totalPrice.toFixed(2)}</span>
+                    </div>
+                    <input type="number" class="quantity-input" value="${item.quantity}" min="1">
+                    <button class="btn-remove-item">&#10006;</button>
+                `;
+                cartItemsList.appendChild(cartItem);
+            });
+
+            // Render total price
+            const totalPriceElement = document.createElement('li');
+            totalPriceElement.classList.add('total-price');
+            totalPriceElement.textContent = `Total: $${total.toFixed(2)}`;
+            cartItemsList.appendChild(totalPriceElement);
+
+            // Add event listeners for removing items and updating quantities
+            addCartItemEventListeners();
+        }
+
+        // Function to add event listeners for removing items and updating quantities
+        function addCartItemEventListeners() {
+            const removeButtons = document.querySelectorAll('.btn-remove-item');
+            const quantityInputs = document.querySelectorAll('.quantity-input');
+
+            removeButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    removeItem(index);
+                });
+            });
+
+            quantityInputs.forEach((input, index) => {
+                input.addEventListener('change', (e) => {
+                    updateQuantity(index, parseInt(e.target.value));
+                });
+            });
+        }
+
+        // Function to remove an item from the cart
+        function removeItem(index) {
+            cartItems.splice(index, 1);
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            renderCartItems();
+            updateCartCount(); // Update cart count
+        }
+
+        // Function to update the quantity of an item in the cart
+        function updateQuantity(index, newQuantity) {
+            if (newQuantity <= 0) {
+                // Remove item if quantity is 0 or less
+                removeItem(index);
+            } else {
+                // Update quantity
+                cartItems[index].quantity = newQuantity;
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                renderCartItems();
+                updateCartCount(); // Update cart count
+            }
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const count = cartItems.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = count;
+        }
+
+        // User info and logout functionality
+        const userInfo = document.getElementById('userInfo');
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        if (user) {
+            // If user is logged in, display user info and logout button
+            userInfo.innerHTML = `
+                <span class="user-name">Welcome, ${user.username}</span>
+                <button class="btn-logout" id="btnLogout">Logout</button>
+            `;
+            const btnLogout = document.getElementById('btnLogout');
+            btnLogout.addEventListener('click', () => {
+                // Clear user data from localStorage and reload the page
+                localStorage.removeItem('user');
+                window.location.reload();
+            });
+        }
+    </script>
+</body>
+</html>

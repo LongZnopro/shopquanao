@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <form id="registerForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password" required><br>
+            <input type="submit" value="Register">
+        </form>
+        <p>Already have an account? <a href="login.html">Login here</a>.</p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
+    
+    registerForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Lấy thông tin từ form đăng ký
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        
+        // Kiểm tra mật khẩu và xác nhận mật khẩu
+        if (password !== confirmPassword) {
+            alert('Password and Confirm Password do not match.');
+            return;
+        }
+        
+        // Lưu thông tin người dùng vào localStorage hoặc file JSON
+        const newUser = {
+            username: username,
+            email: email,
+            password: password
+        };
+        
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        // Thông báo đăng ký thành công và chuyển hướng đến trang đăng nhập sau 1 giây
+        alert('Registration successful. You will be redirected to the login page.');
+        setTimeout(function() {
+            window.location.href = 'login.html';
+        }, 1000);
+    });
+});
+
+    </script>
+</body>
+</html>
